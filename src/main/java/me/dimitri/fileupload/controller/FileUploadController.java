@@ -38,7 +38,6 @@ public class FileUploadController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Get("/test")
     public HttpResponse<?> test() {
-        System.out.println("test");
-        return HttpResponse.ok("test");
+        return HttpResponse.ok("{\"response\": \"Success\"}");
     }
 }
