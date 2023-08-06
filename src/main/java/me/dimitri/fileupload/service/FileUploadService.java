@@ -17,7 +17,7 @@ public class FileUploadService {
     private static final Logger log = LoggerFactory.getLogger(FileUploadService.class);
 
     public boolean saveFile(CompletedFileUpload file) {
-        String fileName = UUID.randomUUID().toString();
+        String fileName = UUID.randomUUID().toString() + fileExtension(file.getFilename());
         String filePath = "/files/" + fileName;
 
         File systemFile = new File(BASE_DIR + filePath);
@@ -32,6 +32,11 @@ public class FileUploadService {
         }
 
         return writeFile(systemFile, file);
+    }
+
+    private String fileExtension(String filename) {
+        int dotIndex = filename.lastIndexOf(".");
+        return "." + filename.substring(dotIndex + 1);
     }
 
     private String renameFile(String filename) {
