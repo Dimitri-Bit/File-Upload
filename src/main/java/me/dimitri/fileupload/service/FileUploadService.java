@@ -1,5 +1,6 @@
 package me.dimitri.fileupload.service;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import jakarta.inject.Singleton;
 import org.apache.commons.io.FileUtils;
@@ -16,11 +17,11 @@ public class FileUploadService {
     private final String BASE_DIR = System.getProperty("user.dir");
     private static final Logger log = LoggerFactory.getLogger(FileUploadService.class);
 
-    public boolean saveFile(CompletedFileUpload file) {
+    public boolean saveFile(CompletedFileUpload file, HttpRequest request) {
         String fileName = UUID.randomUUID().toString() + fileExtension(file.getFilename());
-        String filePath = "/files/" + fileName;
-
+        String filePath = "/files/" + resolveAddress(request) + "/" + fileName;
         File systemFile = new File(BASE_DIR + filePath);
+
         if (!systemFile.getParentFile().exists()) {
             systemFile.getParentFile().mkdirs();
         }
@@ -32,6 +33,10 @@ public class FileUploadService {
         }
 
         return writeFile(systemFile, file);
+    }
+
+    private String resolveAddress(HttpRequest request) {
+        return request.getRemoteAddress().getAddress().getHostAddress();
     }
 
     private String fileExtension(String filename) {
