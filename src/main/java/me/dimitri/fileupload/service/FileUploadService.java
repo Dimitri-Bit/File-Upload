@@ -3,25 +3,31 @@ package me.dimitri.fileupload.service;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import jakarta.inject.Singleton;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 @Singleton
 public class FileUploadService {
 
     private final String BASE_DIR = System.getProperty("user.dir");
+    private static final Logger log = LoggerFactory.getLogger(FileUploadService.class);
 
     public boolean saveFile(CompletedFileUpload file) {
-        String filePath = "/files/" + file.getFilename();
-        File systemFile = new File(BASE_DIR + filePath);
+        String fileName = UUID.randomUUID().toString();
+        String filePath = "/files/" + fileName;
 
+        File systemFile = new File(BASE_DIR + filePath);
         if (!systemFile.getParentFile().exists()) {
             systemFile.getParentFile().mkdirs();
         }
 
         if (systemFile.exists()) {
-            String newName = renameFile(file.getFilename());
+            String newName = renameFile(fileName);
+            log.warn("A file with the same random UUID name already exists. What?!");
             systemFile = new File(BASE_DIR + "/files/" + newName);
         }
 
